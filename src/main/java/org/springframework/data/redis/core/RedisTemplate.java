@@ -58,42 +58,29 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Helper class that simplifies Redis data access code.
- * <p/>
- * Performs automatic serialization/deserialization between the given objects and the underlying binary data in the
- * Redis store. By default, it uses Java serialization for its objects (through {@link JdkSerializationRedisSerializer}
- * ). For String intensive operations consider the dedicated {@link StringRedisTemplate}.
- * <p/>
- * The central method is execute, supporting Redis access code implementing the {@link RedisCallback} interface. It
- * provides {@link RedisConnection} handling such that neither the {@link RedisCallback} implementation nor the calling
- * code needs to explicitly care about retrieving/closing Redis connections, or handling Connection lifecycle
- * exceptions. For typical single step actions, there are various convenience methods.
- * <p/>
- * Once configured, this class is thread-safe.
- * <p/>
- * Note that while the template is generified, it is up to the serializers/deserializers to properly convert the given
- * Objects to and from binary data.
- * <p/>
- * <b>This is the central class in Redis support</b>.
+ * 简化Redis数据访问代码的助手类。
+ * 在给定对象和底层二进制数据之间执行自动序列化/反序列化
+ * 中心方法是execute，支持实现{@link RedisCallback}接口的Redis访问代码。它
+ * 		*提供了{@link RedisConnection}处理，使得{@link RedisCallback}实现和调用都不能
+ * 		*代码需要明确地关心检索/关闭Redis连接，或处理连接生命周期
+ * 		*例外。对于典型的单步操作，有各种方便的方法。
+ * 	一旦配置，这个类是线程安全的。
+ * 		* < p / >
+ * 		*注意，当模板被泛化时，由序列化器/反序列化器来正确转换给定的内容
+ * 		*二进制数据之间的对象。
  *
- * @author Costin Leau
- * @author Christoph Strobl
- * @author Ninad Divadkar
- * @author Anqing Shao
- * @author Mark Paluch
- * @author Denis Zavedeev
- * @param <K> the Redis key type against which the template works (usually a String)
- * @param <V> the Redis value type against which the template works
- * @see StringRedisTemplate
+ * 		模板所对应的Redis键类型(通常是一个字符串)
+ * 		* @param <V>模板工作所依据的Redis值类型
+ * 		* @see StringRedisTemplate
  */
 public class RedisTemplate<K, V> extends RedisAccessor implements RedisOperations<K, V>, BeanClassLoaderAware {
 
-	private boolean enableTransactionSupport = false;
-	private boolean exposeConnection = false;
-	private boolean initialized = false;
-	private boolean enableDefaultSerializer = true;
-	private @Nullable RedisSerializer<?> defaultSerializer;
-	private @Nullable ClassLoader classLoader;
+	private boolean enableTransactionSupport = false;//是否支持事务
+	private boolean exposeConnection = false;//是否暴露连接，用于代理访问的形式
+	private boolean initialized = false;//初始化状态
+	private boolean enableDefaultSerializer = true;//默认的序列化是否开启
+	private @Nullable RedisSerializer<?> defaultSerializer;//默认序列化器
+	private @Nullable ClassLoader classLoader;//类加载器
 
 	@SuppressWarnings("rawtypes") private @Nullable RedisSerializer keySerializer = null;
 	@SuppressWarnings("rawtypes") private @Nullable RedisSerializer valueSerializer = null;
@@ -176,7 +163,7 @@ public class RedisTemplate<K, V> extends RedisAccessor implements RedisOperation
 	}
 
 	/**
-	 * Executes the given action object within a connection, which can be exposed or not.
+	 * ：在连接中执行给定的操作对象，可以公开也可以不公开。
 	 *
 	 * @param <T> return type
 	 * @param action callback object that specifies the Redis action
@@ -189,8 +176,8 @@ public class RedisTemplate<K, V> extends RedisAccessor implements RedisOperation
 	}
 
 	/**
-	 * Executes the given action object within a connection that can be exposed or not. Additionally, the connection can
-	 * be pipelined. Note the results of the pipeline are discarded (making it suitable for write-only scenarios).
+	 * 在可以公开或不公开的连接中执行给定的操作对象。此外，连接可以
+	 * *管线式。注意，管道的结果被丢弃(这使得它适合只写场景)。
 	 *
 	 * @param <T> return type
 	 * @param action callback object to execute
